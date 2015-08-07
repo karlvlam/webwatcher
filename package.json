@@ -1,0 +1,20 @@
+{
+  "name": "webwatcher",
+  "description": "A script of watching the status of web services",
+  "version": "0.0.1",
+  "author": "Karl Lam<karl.lam@nxtomo.hk>",
+  "dependencies": {
+      "log4js":"0.6.26",
+      "promised-io":"0.3.4",
+      "request": "2.60.0",
+      "nconf":"0.7.1"
+  },
+  "license": "GPLv3",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
