@@ -2,7 +2,7 @@
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" 
 var fs = require('fs');
-var ini = require('node-ini');
+var ini = require('ini');
 var http = require('request');
 
 var inifile = process.argv[2];
@@ -14,7 +14,7 @@ if (!conf){
 }
 
 function readini (file){
-    var conf = ini.parseSync(file);
+    var conf = ini.parse(fs.readFileSync(file, 'utf-8'));
     if (!conf) return false;
 
     // [watcher] setting
