@@ -16,6 +16,8 @@ if (!conf){
 function readini (file){
     var conf = ini.parseSync(file);
     if (!conf) return false;
+
+    // [watcher] setting
     if (!conf.watcher) return false;
     var w = conf.watcher;
     if (!w.name || !w.url || !w.timeout || !w.healthcode || !w.checktime) 
@@ -57,6 +59,12 @@ function runTest(job){
             return;
         }
         console.log(new Date(), res.statusCode);
+        if (res.statusCode === job.healthcode){
+            // TODO: success action?
+            return;
+        }
+
+        // TODO: fail action
     });
 };
 
