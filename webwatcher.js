@@ -42,9 +42,20 @@ function readini (file){
         w.healthcode = t; 
     }
 
+    // success & fail must be array
+    if (!w.success) w.success = [];
+    if (!w.fail) w.fail = [];
+    if (!Array.isArray(w.success)){
+        console.log("config error: success must be string array")
+        return false;
+    }
+    if (!Array.isArray(w.fail)){
+        console.log("config error: fail must be string array")
+        return false;
+    }
     return conf;
 }
-console.log(conf)
+console.log(JSON.stringify(conf,null,2))
 
 function runTest(job){
     var watcher = job.watcher;
