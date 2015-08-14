@@ -53,8 +53,32 @@ function readini (file){
         console.log("config error: fail must be string array")
         return false;
     }
+
+    for (var i=0; i < w.success.length; i++){
+        if (!checkNotifier(conf, w.success[i])){
+            console.log("config error: success notifier format error")
+            return false;
+        };
+    }
+    for (var i=0; i < w.fail.length; i++){
+        if (!checkNotifier(conf, w.fail[i])){
+            console.log("config error: fail notifier format error")
+            return false;
+        };
+    }
+
+
     return conf;
 }
+
+function checkNotifier(conf, name){
+    var n = conf[name];
+    if (typeof n !== 'object') return false;
+    
+
+    return true;
+} 
+
 console.log(JSON.stringify(conf,null,2))
 
 function runTest(job){
