@@ -22,6 +22,8 @@ checkNotifierType['http'] = function(n){
             return false;
     }
 
+    if (!n['url']) return false;
+
     // default timeout 5s
     var t = parseInt(n['timeout']);
     if (isNaN(t) || t < 5000){
@@ -31,6 +33,13 @@ checkNotifierType['http'] = function(n){
     }
 
     return true;
+}
+
+var runNotifierType = {}; 
+runNotifierType['http'] = function(n, cb){
+    var method = n['method'];
+    cb(null, {result: "OK"});
+
 }
 
 function checkNotifier(conf, name){
@@ -44,7 +53,19 @@ function checkNotifier(conf, name){
     return fun(n);
 } 
 
+function runNotifier(conf, name, cb){
+    var n = conf[name]; // get the notifier by name
+    if (typeof n !== 'object') return false;
+    if (!n['type']) return false;
+
+    console.log(checkNotifierType);
+    var fun = runNotifierType[n['type']];
+    if(typeof fun !== 'function') return false;
+    fun(n, cb);
+} 
+
 
 module.exports = {
     checkNotifier: checkNotifier,
+    runNotifier: runNotifier,
 }

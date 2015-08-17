@@ -7,6 +7,7 @@ var http = require('request');
 
 var notifier = require('./notifier.js');
 var checkNotifier = notifier.checkNotifier;
+var runNotifier = notifier.runNotifier;
 
 var inifile = process.argv[2];
 
@@ -78,18 +79,51 @@ function runTest(job){
         method: "GET",
         timeout: watcher.timeout,
     };
+
+    function _fireFail(){
+        for (var i=0; i < watcher.fail.length; i++){
+            runNotifier(job, watcher.fail[i], function(err, result){
+                if (err){
+                    console.log("Error:", err);
+                    return;
+                }
+                console.log(result);
+            });
+
+            console.log("fail ", i, " sent!");
+        }
+    }
+
+    function _fireSuccess(){
+        console.log("DO success ", watcher);
+        for (var i=0; i < watcher.success.length; i++){
+            runNotifier(job, watcher.success[i], function(err, result){
+                if (err){
+                    console.log("Error:", err);
+                    return;
+                }
+                console.log(result);
+            });
+
+            console.log("success ", i, " sent!");
+        }
+
+    }
+
     http(opt, function(err,res){
         if(err){
             console.log(new Date(), err);
+            _fireFail();
             return;
         }
         console.log(new Date(), res.statusCode);
-        if (res.statusCode === job.healthcode){
-            // TODO: success action?
+        if (res.statusCode === watcher.healthcode){
+            _fireSuccess();
             return;
         }
 
         // TODO: fail action
+        _fireFail();
     });
 };
 
@@ -102,5 +136,5 @@ if (!conf){
 }
 
 console.log(new Date(), 'Starts..');
-//setInterval(runTest, conf.watcher.checktime, conf);
+setInterval(runTest, conf.watcher.checktime, conf);
 
