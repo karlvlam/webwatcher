@@ -3,6 +3,7 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" 
 var fs = require('fs');
 var ini = require('ini');
+var url = require('url');
 var http = require('request');
 
 
@@ -38,7 +39,27 @@ checkNotifierType['http'] = function(n){
 var runNotifierType = {}; 
 runNotifierType['http'] = function(n, cb){
     var method = n['method'];
-    cb(null, {result: "OK"});
+    var opt = {
+        uri: n['url'],
+        method: method,
+        timeout: n['timeout'],
+    }
+
+    if (n['param']){
+        if(method === 'GET'){
+            opt.uri += '?' + require('querystring').stringify(n['param']);
+        }
+        if(method === 'POST'){
+            opt.body = require('querystring').stringify(n['param']);
+        }
+    }
+    http(opt, function(err, res){
+        if(err){
+            console.log('ERROR', new Error('HTTP_ERROR'));
+            console.log(err);
+        }
+        cb(err, {result: 'OK'});
+    });
 
 }
 
