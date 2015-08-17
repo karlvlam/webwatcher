@@ -5,13 +5,11 @@ var fs = require('fs');
 var ini = require('ini');
 var http = require('request');
 
+var notifier = require('./notifier.js');
+var checkNotifier = notifier.checkNotifier;
+
 var inifile = process.argv[2];
 
-var conf = readini(inifile);
-if (!conf){
-    console.log('config file error!');
-    process.exit(1);
-}
 
 function readini (file){
     var conf = ini.parse(fs.readFileSync(file, 'utf-8'));
@@ -71,14 +69,6 @@ function readini (file){
     return conf;
 }
 
-function checkNotifier(conf, name){
-    var n = conf[name];
-    if (typeof n !== 'object') return false;
-    
-
-    return true;
-} 
-
 console.log(JSON.stringify(conf,null,2))
 
 function runTest(job){
@@ -103,6 +93,14 @@ function runTest(job){
     });
 };
 
+/* starts */
+
+var conf = readini(inifile);
+if (!conf){
+    console.log('config file error!');
+    process.exit(1);
+}
+
 console.log(new Date(), 'Starts..');
-setInterval(runTest, conf.watcher.checktime, conf);
+//setInterval(runTest, conf.watcher.checktime, conf);
 
