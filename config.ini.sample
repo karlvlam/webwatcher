@@ -1,0 +1,26 @@
+[watcher]
+name = google test
+url = http://www.google.com
+timeout = 5000
+healthcode = 200
+checktime = 1000
+
+success[] = s1 
+success[] = s1 
+;success[] = s2 
+
+fail[] = s1 
+fail[] = s1
+
+[s1]
+type = http
+method = get 
+timeout = 5000
+url = http://127.0.0.1:8888/
+
+[s1.param]
+user = user1
+password = abc123
+
+
+
