@@ -72,8 +72,6 @@ function readini (file){
     return conf;
 }
 
-logger.info(JSON.stringify(conf,null,2));
-
 function runTest(job){
     var watcher = job.watcher;
     var opt = {
