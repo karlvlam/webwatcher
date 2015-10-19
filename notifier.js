@@ -4,7 +4,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 var fs = require('fs');
 var url = require('url');
 var http = require('request');
+var log4js = require('log4js');
 
+var logger = log4js.getLogger('LOG');
 
 var checkNotifierType = {};
 checkNotifierType['http'] = function(n){
@@ -48,10 +50,20 @@ runNotifierType['http'] = function(n, cb){
         if(method === 'GET'){
             opt.uri += '?' + require('querystring').stringify(n['param']);
         }
-        if(method === 'POST'){
-            opt.body = require('querystring').stringify(n['param']);
-        }
     }
+
+    if(method === 'POST'){
+        http.post({url:opt.uri, form: n.param}, function(err, res){
+
+            if(err){
+                logger.debug('ERROR', new Error('HTTP_ERROR'));
+                logger.debug(err);
+            }
+
+            cb(err, {result:'OK'});
+        });
+    }
+
     http(opt, function(err, res){
         if(err){
             logger.debug('ERROR', new Error('HTTP_ERROR'));
