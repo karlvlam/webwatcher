@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "14.04"
+
+  config.vm.host_name = "webwatcher"
+
+  config.vm.network :public_network
+
+  config.vm.synced_folder "../../webwatcher", "/opt/webwatcher", create: true, group: "node", owner: "node"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize [ "modifyvm", :id, "--memory", 1024]
+    vb.customize [ "modifyvm", :id, "--name", "webwatcher"]
+  end
+
+  config.vm.provision "chef_solo" do |chef|
+  chef.cookbooks_path = ["cookbooks"]
+  chef.add_recipe "webwatcher::default"
+  end
+end
