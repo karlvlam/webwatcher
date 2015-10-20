@@ -1,13 +1,14 @@
 'use strict';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 var fs = require('fs');
-var ini = require('ini');
 var url = require('url');
 var http = require('request');
+var log4js = require('log4js');
 
+var logger = log4js.getLogger('LOG');
 
-var checkNotifierType = {}; 
+var checkNotifierType = {};
 checkNotifierType['http'] = function(n){
     if (!n['method']) return false;
 
@@ -36,7 +37,7 @@ checkNotifierType['http'] = function(n){
     return true;
 }
 
-var runNotifierType = {}; 
+var runNotifierType = {};
 runNotifierType['http'] = function(n, cb){
     var method = n['method'];
     var opt = {
@@ -49,14 +50,24 @@ runNotifierType['http'] = function(n, cb){
         if(method === 'GET'){
             opt.uri += '?' + require('querystring').stringify(n['param']);
         }
-        if(method === 'POST'){
-            opt.body = require('querystring').stringify(n['param']);
-        }
     }
+
+    if(method === 'POST'){
+        http.post({url:opt.uri, form: n.param}, function(err, res){
+
+            if(err){
+                logger.debug('ERROR', new Error('HTTP_ERROR'));
+                logger.debug(err);
+            }
+
+            cb(err, {result:'OK'});
+        });
+    }
+
     http(opt, function(err, res){
         if(err){
-            console.log('ERROR', new Error('HTTP_ERROR'));
-            console.log(err);
+            logger.debug('ERROR', new Error('HTTP_ERROR'));
+            logger.debug(err);
         }
         cb(err, {result: 'OK'});
     });
@@ -68,22 +79,20 @@ function checkNotifier(conf, name){
     if (typeof n !== 'object') return false;
     if (!n['type']) return false;
 
-    console.log(checkNotifierType);
     var fun = checkNotifierType[n['type']];
     if(typeof fun !== 'function') return false;
     return fun(n);
-} 
+}
 
 function runNotifier(conf, name, cb){
     var n = conf[name]; // get the notifier by name
     if (typeof n !== 'object') return false;
     if (!n['type']) return false;
 
-    console.log(checkNotifierType);
     var fun = runNotifierType[n['type']];
     if(typeof fun !== 'function') return false;
     fun(n, cb);
-} 
+}
 
 
 module.exports = {
