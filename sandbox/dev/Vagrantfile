@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.network :public_network
 
-  config.vm.synced_folder "../../webwatcher", "/opt/webwatcher", create: true, group: "node", owner: "node"
+  config.vm.synced_folder "../../webwatcher", "/opt/webwatcher", create: true, group: "vagrant", owner: "vagrant"
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize [ "modifyvm", :id, "--memory", 1024]
