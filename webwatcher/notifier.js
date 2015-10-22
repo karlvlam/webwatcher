@@ -62,6 +62,8 @@ runNotifierType['http'] = function(n, cb){
 
             cb(err, {result:'OK'});
         });
+
+        return;
     }
 
     http(opt, function(err, res){
