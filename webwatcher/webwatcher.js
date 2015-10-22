@@ -44,12 +44,12 @@ function readini(file) {
 		w.healthcode = t;
 	}
 
-    var t = parseInt(w.resendtime);
-    if (isNaN(t) || t < 0) {
-        w.resendtime = 60000;
-    } else {
-        w.resendtime = t;
-    }
+	var t = parseInt(w.resendtime);
+	if (isNaN(t) || t < 0) {
+		w.resendtime = 60000;
+	} else {
+		w.resendtime = t;
+	}
 
 	// success & fail must be array
 	if (!w.success) w.success = [];
