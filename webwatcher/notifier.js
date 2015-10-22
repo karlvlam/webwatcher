@@ -9,11 +9,11 @@ var log4js = require('log4js');
 var logger = log4js.getLogger('LOG');
 
 var checkNotifierType = {};
-checkNotifierType['http'] = function(n){
+checkNotifierType['http'] = function(n) {
 	if (!n['method']) return false;
 
 	// supported methods : GET, POST
-	switch (n['method'].toUpperCase()){
+	switch (n['method'].toUpperCase()) {
 		case 'GET':
 			n['method'] = 'GET';
 			break;
@@ -28,9 +28,9 @@ checkNotifierType['http'] = function(n){
 
 	// default timeout 5s
 	var t = parseInt(n['timeout']);
-	if (isNaN(t) || t < 5000){
+	if (isNaN(t) || t < 5000) {
 		n['timeout'] = 5000;
-	}else{
+	} else {
 		n['timeout'] = t;
 	}
 
@@ -38,7 +38,7 @@ checkNotifierType['http'] = function(n){
 }
 
 var runNotifierType = {};
-runNotifierType['http'] = function(n, cb){
+runNotifierType['http'] = function(n, cb) {
 	var method = n['method'];
 	var opt = {
 		uri: n['url'],
@@ -46,53 +46,60 @@ runNotifierType['http'] = function(n, cb){
 		timeout: n['timeout'],
 	}
 
-	if (n['param']){
-		if(method === 'GET'){
+	if (n['param']) {
+		if (method === 'GET') {
 			opt.uri += '?' + require('querystring').stringify(n['param']);
 		}
 	}
 
-	if(method === 'POST'){
-		http.post({url:opt.uri, form: n.param}, function(err, res){
+	if (method === 'POST') {
+		http.post({
+			url: opt.uri,
+			form: n.param
+		}, function(err, res) {
 
-			if(err){
+			if (err) {
 				logger.debug('ERROR', new Error('HTTP_ERROR'));
 				logger.debug(err);
 			}
 
-			cb(err, {result:'OK'});
+			cb(err, {
+				result: 'OK'
+			});
 		});
 
 		return;
 	}
 
-	http(opt, function(err, res){
-		if(err){
+	http(opt, function(err, res) {
+		if (err) {
 			logger.debug('ERROR', new Error('HTTP_ERROR'));
 			logger.debug(err);
 		}
-		cb(err, {result: 'OK'});
+		cb(err, {
+			result: 'OK'
+		});
 	});
 
 }
 
-function checkNotifier(conf, name){
+function checkNotifier(conf, name) {
 	var n = conf[name]; // get the notifier by name
 	if (typeof n !== 'object') return false;
 	if (!n['type']) return false;
 
 	var fun = checkNotifierType[n['type']];
-	if(typeof fun !== 'function') return false;
+	if (typeof fun !== 'function') return false;
 	return fun(n);
 }
 
-function runNotifier(conf, name, cb){
+function runNotifier(conf, name, cb) {
 	var n = conf[name]; // get the notifier by name
 	if (typeof n !== 'object') return false;
 	if (!n['type']) return false;
 
 	var fun = runNotifierType[n['type']];
-	if(typeof fun !== 'function') return false;
+	if (typeof fun !== 'function') return false;
 	fun(n, cb);
 }
 
